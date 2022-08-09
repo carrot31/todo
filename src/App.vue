@@ -1,9 +1,9 @@
 <template>
-  <h1 v-bind:class='nameClass'>
-    {{ name }}
-  </h1>
-  <input :type="type" :value="name"/>
-	<button class="btn btn-primary" @click="updateName">Click</button>
+<!-- 양방향 바인딩 -->
+  <input type="text" 
+  v-model="name"
+  />
+	<button class="btn btn-primary" @click="onSubmit">Click</button>
 </template>
 
 <script>
@@ -12,21 +12,14 @@ import {ref} from 'vue';
 export default {
   setup() {
 		const name = ref('Kossie');
-    const type = ref('number');
-    const nameClass = ref('name')
 
-    const updateName = () => {
-      name.value = 'Mandu'
-      type.value = 'text'
-      nameClass.value = 'name'
+    const onSubmit = () => {
+      console.log(name.value)
     }
 
 		return {
-      nameClass,
-      type,
 			name,
-      updateName,
-			// greet,
+      onSubmit,
 		};
 	},
 }
