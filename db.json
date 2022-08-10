@@ -2,7 +2,7 @@
   "todos": [
     {
       "subject": "aaa",
-      "completed": false,
+      "completed": true,
       "id": 1
     },
     {
@@ -11,19 +11,14 @@
       "id": 2
     },
     {
-      "subject": "d",
-      "completed": false,
+      "subject": "ddd",
+      "completed": true,
       "id": 3
     },
     {
-      "subject": "s",
+      "subject": "ddd",
       "completed": false,
       "id": 4
-    },
-    {
-      "subject": "asfd",
-      "completed": false,
-      "id": 5
     }
   ]
 }

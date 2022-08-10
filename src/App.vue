@@ -40,26 +40,67 @@ export default {
             color: "gray",
         };
         const error = ref('');
-        const addTodo = (todo) => {
+
+        //DB에서 데이터 가져오기
+        const getTodos = async () =>{
+          error.value='';
+          try{
+            const res = await axios.get('http://localhost:3000/todos',{})
+            todos.value = res.data
+          } catch(err){
+            console.log(err)
+            error.value='Sth went wrong'
+          }
+          
+        }
+        getTodos();
+
+        //DB에 데이터 추가
+        const addTodo = async (todo) => {
             //데이터베이스 todo 저장
             error.value='';
-            axios.post('http://localhost:3000/todos', {
-              subject: todo.subject,
-              completed: todo.completed,
-            }).then(res=>{
-              console.log(res)
-              todos.value.push(res.data)
-            }).catch(err =>{
+            try{
+              const res = await axios.post('http://localhost:3000/todos', {
+                subject: todo.subject,
+                completed: todo.completed,
+            })
+            todos.value.push(res.data)
+            } catch (err){
               console.log(err)
               error.value='Sth went wrong'
-            })
+            }
         };
-        const toggleTodo = (index) => {
-            todos.value[index].completed = !todos.value[index].completed
+        
+        //DB에 completed 반영
+        const toggleTodo = async (index) => {
+          error.value='';
+          const id = todos.value[index].id
+            try{
+              await axios.patch('http://localhost:3000/todos/' + id, {
+                completed: !todos.value[index].completed
+              })
+              todos.value[index].completed = !todos.value[index].completed
+            } catch (err){
+              console.log(err)
+              error.value='Sth went wrong'
+            }
+            
         };
-        const deleteTodo = (index) => {
-            todos.value.splice(index, 1);
+
+        //DB에 데이터 삭제
+        const deleteTodo = async (index) => {
+          error.value='';
+          const id = todos.value[index].id
+          try{
+            await axios.delete('http://localhost:3000/todos/' +id)
+            todos.value.splice(index, 1); 
+          } catch(err){
+            console.log(err)
+            error.value='Sth went wrong'
+          }
         };
+
+        //데이터 검색
         const searchText = ref('');
         const filteredTodos = computed(() => {
             if(searchText.value){
@@ -77,6 +118,7 @@ export default {
             searchText,
             filteredTodos,
             error,
+            getTodos,
         };
     },
     components: { TodoSimpleForm, TodoList }
