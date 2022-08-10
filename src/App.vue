@@ -21,7 +21,11 @@
           </button>
         </div>      
       </form>
-      {{todos}}
+      <div class="card mt-2" v-for="(todo,j) in todos" :key="todo+j">
+        <div class="card-body p-2">
+          {{todos[j].subject}}
+        </div>
+      </div>
   </div>
   
 </template>
@@ -32,10 +36,11 @@ import {ref} from 'vue';
 export default {
   setup() {
 		const todo = ref('');
-    const todos = ref([]);
+    const todos = ref([{id:1, subject: '휴대폰사기'},{id:2, subject: '장보기'}]);
 
     const onSubmit = () => {
-      todos.value.push({
+      todos.value.push(
+        {
         id: Date.now(), 
         subject: todo.value
       })
