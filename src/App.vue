@@ -1,17 +1,20 @@
 <template>
 
   <div class="container">
-    <h4>count: {{count}}</h4>
-    <h4>doubleCount: {{doubleCount}}</h4>
-    <h4>doubleCountMethod: {{doubleCountMethod()}}</h4>
-    <button @click="count++">Click</button>
     <h1>To-Do List</h1>
+    <input 
+      class="form-control" 
+      type="text" 
+      v-model="searchText" 
+      placeholder="Search"
+    />
+    <hr/>
     <TodoSimpleForm @add-todo="addTodo" />
-      <div v-if="!todos.length">
-        추가된 Todo가 없습니다.
+      <div v-if="!filteredTodos.length">
+        There is nothing to display
       </div>
     <TodoList 
-      :todos="todos" 
+      :todos="filteredTodos" 
       @toggle-todo="toggleTodo" 
       @delete-todo="deleteTodo"/>  
   </div>
@@ -43,27 +46,22 @@ export default {
         const deleteTodo = (index) => {
             todos.value.splice(index, 1);
         };
-        const count = ref(1);
-        //함수 vs computed 
-        //computed는 인자로 받아올 수 x => computed안에 ref가 실행되거나 값이 변경될때만 변경됌 
-        //computed는 값을 캐쉬함! 
-        const doubleCount = computed(()=>{
-          console.log('computed')
-          return count.value*2
-        })
-        const doubleCountMethod = () =>{
-          console.log('method')
-          return count.value*2;
-        }
+        const searchText = ref('');
+        const filteredTodos = computed(() => {
+            if(searchText.value){
+              return todos.value.filter(todo => 
+              todo.subject.includes(searchText.value));
+            }
+            return todos.value;
+        });
         return {
             todoStyle,
             todos,
             addTodo,
             toggleTodo,
             deleteTodo,
-            count,
-            doubleCount,
-            doubleCountMethod,
+            searchText,
+            filteredTodos,
         };
     },
     components: { TodoSimpleForm, TodoList }
