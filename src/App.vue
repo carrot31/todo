@@ -6,28 +6,10 @@
       <div v-if="!todos.length">
         추가된 Todo가 없습니다.
       </div>
-      <div class="card mt-2" v-for="(todo,j) in todos" :key="todo+j">
-        <div class="card-body p-2 d-flex">
-          <div class="form-check flex-grow-1">
-            <input 
-              class="form-check-input" 
-              type="checkbox"
-              v-model="todo.completed"
-            />
-            <label class="form-check-label" :class="{todo: todo.completed}">
-              {{todo.subject}}
-            </label>   
-          </div>
-          <div>
-            <button 
-              class="btn btn-danger btn-sm"
-              @click="deleteTodo(j)"
-            >
-            Delete
-            </button>
-          </div>
-        </div>
-      </div>
+    <TodoList 
+      :todos="todos" 
+      @toggle-todo="toggleTodo" 
+      @delete-todo="deleteTodo"/>  
   </div>
   
 </template>
@@ -35,10 +17,12 @@
 <script>
 import {ref} from 'vue';
 import TodoSimpleForm from './components/TodoSimpleForm.vue';
+import TodoList from './components/TodoList.vue';
 
 export default {
     component: {
         TodoSimpleForm,
+        TodoList,
     },
     setup() {
         const todos = ref([]);
@@ -49,17 +33,21 @@ export default {
         const addTodo = (todo) => {
             todos.value.push(todo)
         };
-        const deleteTodo = (i) => {
-            todos.value.splice(i, 1);
+        const toggleTodo = (index) => {
+            todos.value[index].completed = !todos.value[index].completed
+        }
+        const deleteTodo = (index) => {
+            todos.value.splice(index, 1);
         };
         return {
             todoStyle,
             todos,
             addTodo,
+            toggleTodo,
             deleteTodo,
         };
     },
-    components: { TodoSimpleForm }
+    components: { TodoSimpleForm, TodoList }
 }
 </script>
 
