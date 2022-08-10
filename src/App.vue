@@ -1,9 +1,4 @@
 <template>
-  <!-- v-if는 토글 시 비용 多 => 런타임동안 조건이 거의 바뀌지 않을 때 , 
-  v-show 초기 렌더 시 비용 多 => 토글 자주할 때, -->
-  <div v-if="toggle">true</div>
-  <div v-else>false</div>
-  <button @click="onToggle" class="btn btn-primary" >Toggle</button>
 
   <div class="container">
     <h1>To-Do List</h1>
@@ -29,7 +24,16 @@
       </form>
       <div class="card mt-2" v-for="(todo,j) in todos" :key="todo+j">
         <div class="card-body p-2">
-          {{todos[j].subject}}
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="checkbox"
+              v-model="todo.completed"
+            />
+            <label class="form-check-label">
+              {{todo.subject}}
+            </label>   
+          </div>
         </div>
       </div>
   </div>
@@ -43,7 +47,7 @@ export default {
   setup() {
     const toggle =ref(false);
 		const todo = ref('');
-    const todos = ref([{id:1, subject: '휴대폰사기'},{id:2, subject: '장보기'}]);
+    const todos = ref([]);
     const hasError = ref(false);
 
 
@@ -53,16 +57,13 @@ export default {
       } else{
         todos.value.push({
         id: Date.now(), 
-        subject: todo.value
+        subject: todo.value,
+        completed: false,
       });
         hasError.value = false;
+        todo.value='';
       }
     }
-
-    const onToggle = () => {
-      toggle.value = !toggle.value;
-    }
-
   
 		return {
       hasError,
@@ -70,7 +71,6 @@ export default {
       todos,
 			todo,
       onSubmit,
-      onToggle,
 		};
 	},
 }
