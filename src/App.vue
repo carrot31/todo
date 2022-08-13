@@ -8,17 +8,18 @@
       type="text" 
       v-model="searchText" 
       placeholder="Search"
+      @keyup.enter="searchTodo"
     />
     <hr/>
     <!-- todo 입력창 -->
     <TodoSimpleForm @add-todo="addTodo" />
     <div style="color:red">{{error}}</div>
-      <div v-if="!filteredTodos.length">
+      <div v-if="!todos.length">
         There is nothing to display
       </div>
     <!-- todo 리스트 -->
     <TodoList 
-      :todos="filteredTodos" 
+      :todos="todos" 
       @toggle-todo="toggleTodo" 
       @delete-todo="deleteTodo"/>  
 
@@ -41,7 +42,7 @@
 </template>
 
 <script>
-import {ref, computed} from 'vue';
+import {ref, computed, watch} from 'vue';
 import TodoSimpleForm from './components/TodoSimpleForm.vue';
 import TodoList from './components/TodoList.vue';
 import axios from 'axios';
@@ -49,14 +50,11 @@ import axios from 'axios';
 export default {
     setup() {
         const todos = ref([]);
-        const todoStyle = {
-            textDecoration: "line-through",
-            color: "gray",
-        };
         const error = ref('');
         const numberOfTodos = ref(0);
-        const limit = 5;
+        let limit = 5;
         const currentPage = ref(1);
+        const searchText = ref('');
 
         const numberOfPages = computed(()=>{
           return Math.ceil(numberOfTodos.value/limit);
@@ -68,7 +66,7 @@ export default {
           error.value='';
           try{
             const res = await axios.get(
-              `http://localhost:3000/todos?_page=${page}&_limit=${limit}`,{
+              `http://localhost:3000/todos?_sort=id&_order=desc&subject_like=${searchText.value}&_page=${page}&_limit=${limit}`,{
                 
               }
             );
@@ -87,11 +85,12 @@ export default {
             //데이터베이스 todo 저장
             error.value='';
             try{
-              const res = await axios.post('http://localhost:3000/todos', {
+              await axios.post('http://localhost:3000/todos', {
                 subject: todo.subject,
                 completed: todo.completed,
-            })
-            todos.value.push(res.data)
+            });
+
+            getTodos(1);
             } catch (err){
               console.log(err)
               error.value='Sth went wrong'
@@ -120,7 +119,8 @@ export default {
           const id = todos.value[index].id
           try{
             await axios.delete('http://localhost:3000/todos/' +id)
-            todos.value.splice(index, 1); 
+
+            getTodos(1);
           } catch(err){
             console.log(err)
             error.value='Sth went wrong'
@@ -128,26 +128,42 @@ export default {
         };
 
         //데이터 검색
-        const searchText = ref('');
-        const filteredTodos = computed(() => {
-            if(searchText.value){
-              return todos.value.filter(todo => 
-              todo.subject.includes(searchText.value));
-            }
-            return todos.value;
-        });
+        let timeout = null;
+
+        //키보드 Enter 입력시 바로 검색
+        const searchTodo = ()=>{
+          clearTimeout(timeout)
+          getTodos(1)
+        }
+
+        watch(searchText, () => {
+          //기존 2초를 취소시킴
+          clearTimeout(timeout);
+          timeout = setTimeout(()=>{
+            getTodos(1)
+          },2000)
+        })
+
+        // const filteredTodos = computed(() => {
+        //     if(searchText.value){
+        //       return todos.value.filter(todo => 
+        //       todo.subject.includes(searchText.value));
+        //     }
+        //     return todos.value;
+        // });
+        
         return {
-            todoStyle,
             todos,
             addTodo,
             toggleTodo,
             deleteTodo,
             searchText,
-            filteredTodos,
+            // filteredTodos,
             error,
             getTodos,
             numberOfPages,
             currentPage,
+            searchTodo,
         };
     },
     components: { TodoSimpleForm, TodoList }
