@@ -56,24 +56,9 @@
       "id": 17
     },
     {
-      "subject": "s",
-      "completed": false,
-      "id": 18
-    },
-    {
       "subject": "11",
       "completed": false,
       "id": 19
-    },
-    {
-      "subject": "ㅂㅈㄷ",
-      "completed": false,
-      "id": 20
-    },
-    {
-      "subject": "123",
-      "completed": false,
-      "id": 21
     }
   ]
 }
