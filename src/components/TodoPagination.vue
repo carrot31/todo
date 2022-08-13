@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <nav aria-label="Page navigation example">
       <ul class="pagination">
         <li class="page-item" v-if="currentPage !== 1">
@@ -50,4 +50,4 @@ export default{
 
 
 <style>
-</style>
+</style> -->
