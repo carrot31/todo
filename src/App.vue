@@ -2,6 +2,7 @@
 
   <div class="container">
     <h1>To-Do List</h1>
+    <!-- search 입력창 -->
     <input 
       class="form-control" 
       type="text" 
@@ -9,15 +10,32 @@
       placeholder="Search"
     />
     <hr/>
+    <!-- todo 입력창 -->
     <TodoSimpleForm @add-todo="addTodo" />
     <div style="color:red">{{error}}</div>
       <div v-if="!filteredTodos.length">
         There is nothing to display
       </div>
+    <!-- todo 리스트 -->
     <TodoList 
       :todos="filteredTodos" 
       @toggle-todo="toggleTodo" 
       @delete-todo="deleteTodo"/>  
+
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item" v-if="currentPage !== 1">
+          <a style="cursor: pointer" class="page-link" @click="getTodos(currentPage-1)" >Previous</a>
+        </li>
+        <li class="page-item" :class="currentPage === page ? 'active': ''"
+          v-for="(page, index) in numberOfPages" :key="page+index">
+          <a style="cursor: pointer" class="page-link" @click="getTodos(page)">{{page}}</a>
+        </li>
+        <li class="page-item" v-if="numberOfPages !== currentPage">
+          <a style="cursor: pointer" class="page-link" @click="getTodos(currentPage+1)">Next</a>
+        </li>
+      </ul>
+    </nav>
   </div>
   
 </template>
@@ -29,10 +47,6 @@ import TodoList from './components/TodoList.vue';
 import axios from 'axios';
 
 export default {
-    component: {
-        TodoSimpleForm,
-        TodoList,
-    },
     setup() {
         const todos = ref([]);
         const todoStyle = {
@@ -40,12 +54,25 @@ export default {
             color: "gray",
         };
         const error = ref('');
+        const numberOfTodos = ref(0);
+        const limit = 5;
+        const currentPage = ref(1);
+
+        const numberOfPages = computed(()=>{
+          return Math.ceil(numberOfTodos.value/limit);
+        })
 
         //DB에서 데이터 가져오기
-        const getTodos = async () =>{
+        const getTodos = async (page = currentPage.value) =>{
+          currentPage.value = page;
           error.value='';
           try{
-            const res = await axios.get('http://localhost:3000/todos',{})
+            const res = await axios.get(
+              `http://localhost:3000/todos?_page=${page}&_limit=${limit}`,{
+                
+              }
+            );
+            numberOfTodos.value = res.headers['x-total-count'];
             todos.value = res.data
           } catch(err){
             console.log(err)
@@ -119,6 +146,8 @@ export default {
             filteredTodos,
             error,
             getTodos,
+            numberOfPages,
+            currentPage,
         };
     },
     components: { TodoSimpleForm, TodoList }
