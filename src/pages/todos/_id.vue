@@ -50,9 +50,11 @@
 <script>
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { ref, computed, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
 import _ from 'lodash';
 import Toast from '@/components/Toast.vue';
+import {useToast} from '@/composables/toast';
+
 
   export default{
     component: {
@@ -65,16 +67,14 @@ import Toast from '@/components/Toast.vue';
         const todo = ref(null);
         const originalTodo = ref(null);
         const loading = ref(true);
-        const showToast = ref(false);
-        const toastMessage = ref('');
-        const toastAlertType= ref('');
-        const timeout = ref(null);
-        
-        //메모리 누수 막기(save 후 페이지 이동시 setTimeout() 막기)
-        onUnmounted(()=>{
-          console.log('unmounted')
-          clearTimeout(timeout.value)
-        })
+
+        const {
+          showToast,
+          toastMessage,
+          toastAlertType,
+          triggerToast,
+        } = useToast();
+
 
         //상세정보 가져오기
         const getTodo = async () => {
@@ -85,7 +85,7 @@ import Toast from '@/components/Toast.vue';
             loading.value = false;
           } catch (err) {
             console.log(err);
-            tiggerToast('Sth went wrong!', 'danger')
+            triggerToast('Sth went wrong!', 'danger')
           }
         };
         getTodo();
@@ -106,20 +106,6 @@ import Toast from '@/components/Toast.vue';
             });
         };
 
-        //저장 후 알림 Toast
-        const tiggerToast = (message, type='success') => {
-            toastMessage.value = message;
-            toastAlertType.value = type;
-            showToast.value = true;
-            //2초후 메세지 사라짐
-            timeout.value = setTimeout(()=>{
-              console.log('hello')
-              toastMessage.value = '';
-              toastAlertType.value = '';
-              showToast.value = false;
-            }, 5000)
-        };
-
         //데이터 수정
         const onSave = async () => {
           try{
@@ -131,7 +117,7 @@ import Toast from '@/components/Toast.vue';
             tiggerToast('Successfuly saved!');
           } catch (err) {
             console.log(err);
-            tiggerToast('Sth went wrong!', 'danger');
+            triggerToast('Sth went wrong!', 'danger');
           }
             
         };
