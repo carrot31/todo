@@ -1,6 +1,5 @@
 <template>
-<router-view/>
-  <div class="container">
+  <div>
     <h1>To-Do List</h1>
     <!-- search 입력창 -->
     <input 
