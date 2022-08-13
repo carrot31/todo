@@ -50,7 +50,7 @@
 <script>
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { ref, computed, onBeforeMount, onMounted, onBeforeUpdate, onUpdated, onBeforeUnmount, onUnmounted } from 'vue';
+import { ref, computed, onUnmounted } from 'vue';
 import _ from 'lodash';
 import Toast from '@/components/Toast.vue';
 
@@ -59,30 +59,6 @@ import Toast from '@/components/Toast.vue';
         Toast,
     },
     setup() {
-        //useEffect()
-        onBeforeMount(()=>{
-          console.log(document.querySelector('#mandu'))
-        })
-        //마운트 될때 바로 실행
-        onMounted(()=>{
-          console.log(document.querySelector('#mandu'))
-        })
-        //state값 변경 시 마다 실행
-        onBeforeUpdate(()=>{
-          console.log('before update')
-        })
-        onUpdated(()=>{
-          console.log('update')
-        })
-        onBeforeUnmount(()=>{
-          console.log('before unmount')
-        })
-        onUnmounted(()=>{
-          console.log('before unmount')
-        })
-        console.log('hello')
-
-
         const route = useRoute();
         const todoId = route.params.id;
         const router = useRouter();
@@ -92,6 +68,13 @@ import Toast from '@/components/Toast.vue';
         const showToast = ref(false);
         const toastMessage = ref('');
         const toastAlertType= ref('');
+        const timeout = ref(null);
+        
+        //메모리 누수 막기(save 후 페이지 이동시 setTimeout() 막기)
+        onUnmounted(()=>{
+          console.log('unmounted')
+          clearTimeout(timeout.value)
+        })
 
         //상세정보 가져오기
         const getTodo = async () => {
@@ -129,11 +112,12 @@ import Toast from '@/components/Toast.vue';
             toastAlertType.value = type;
             showToast.value = true;
             //2초후 메세지 사라짐
-            setTimeout(()=>{
+            timeout.value = setTimeout(()=>{
+              console.log('hello')
               toastMessage.value = '';
               toastAlertType.value = '';
               showToast.value = false;
-            }, 2000)
+            }, 5000)
         };
 
         //데이터 수정
