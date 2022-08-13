@@ -1,15 +1,17 @@
 <template>
   <div class="card mt-2" v-for="(todo,index) in todos" :key="todo+index">
-    <div class="card-body p-2 d-flex align-items-center">
-      <div 
-      class="form-check flex-grow-1"
-      @click="moveToPage(todo.id)"
-      >
+    <div 
+    class="card-body p-2 d-flex align-items-center" 
+    style="cursor: pointer"
+    @click="moveToPage(todo.id)"
+    >
+      <div class="form-check flex-grow-1">
         <input 
           class="form-check-input" 
           type="checkbox"
           :checked="todo.completed"
-          @change="toggleTodo(index)"
+          @change="toggleTodo(index, $event)"
+          @click.stop
         />
         <label class="form-check-label" :class="{todo: todo.completed}">
           {{todo.subject}}
@@ -18,7 +20,7 @@
       <div>
         <button 
           class="btn btn-danger btn-sm"
-          @click="deleteTodo(index)"
+          @click.stop="deleteTodo(index)"
         >
         Delete
         </button>
@@ -41,8 +43,8 @@ export default{
   setup(props, {emit}){
     const router = useRouter();
 
-    const toggleTodo = (index) =>{
-        emit('toggle-todo', index)
+    const toggleTodo = (index, event) =>{
+        emit('toggle-todo', index, event.target.checked)
     };
 
     const deleteTodo = (index) => {
@@ -50,6 +52,7 @@ export default{
     };
 
     const moveToPage = (todoId) =>{
+       //router.push('/todos/' + todoId)
        router.push({
         name: 'Todo',
         params: {

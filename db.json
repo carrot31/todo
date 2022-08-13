@@ -32,33 +32,18 @@
     },
     {
       "subject": "10",
-      "completed": false,
+      "completed": true,
       "id": 10
     },
     {
       "subject": "13",
-      "completed": false,
+      "completed": true,
       "id": 13
-    },
-    {
-      "subject": "s",
-      "completed": false,
-      "id": 15
     },
     {
       "subject": "a",
       "completed": false,
       "id": 16
-    },
-    {
-      "subject": "f",
-      "completed": false,
-      "id": 17
-    },
-    {
-      "subject": "11",
-      "completed": false,
-      "id": 19
     }
   ]
 }

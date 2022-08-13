@@ -98,14 +98,14 @@ export default {
         };
         
         //DB에 completed 반영
-        const toggleTodo = async (index) => {
+        const toggleTodo = async (index, checked) => {
           error.value='';
           const id = todos.value[index].id
             try{
               await axios.patch('http://localhost:3000/todos/' + id, {
-                completed: !todos.value[index].completed
+                completed: checked
               })
-              todos.value[index].completed = !todos.value[index].completed
+              todos.value[index].completed = checked
             } catch (err){
               console.log(err)
               error.value='Sth went wrong'
