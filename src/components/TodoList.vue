@@ -43,14 +43,17 @@ export default{
   setup(props, {emit}){
     const router = useRouter();
 
+    //완료-미완료 토글
     const toggleTodo = (index, event) =>{
         emit('toggle-todo', index, event.target.checked)
     };
 
+    //삭제 버튼
     const deleteTodo = (index) => {
         emit('delete-todo',index)
     };
 
+    //상세페이지 이동
     const moveToPage = (todoId) =>{
        //router.push('/todos/' + todoId)
        router.push({
