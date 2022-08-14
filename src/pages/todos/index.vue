@@ -1,6 +1,15 @@
 <template>
   <div>
-    <h1>To-Do List</h1>
+    <div class="d-flex justify-content-between mb-3">
+      <h1>To-Do List</h1>
+      <button 
+        class="btn btn-primary"
+        @click="moveToCreatePage"
+      >
+      Create Todo
+      </button>
+    </div>
+    
     <!-- search 입력창 -->
     <input 
       class="form-control" 
@@ -11,8 +20,6 @@
     />
     <hr/>
     <!-- todo 입력창 -->
-    <TodoSimpleForm @add-todo="addTodo" />
-    <div style="color:red">{{error}}</div>
       <div v-if="!todos.length">
         There is nothing to display
       </div>
@@ -46,14 +53,15 @@
 
 <script>
 import {ref, computed, watch} from 'vue';
-import TodoSimpleForm from '@/components/TodoSimpleForm.vue';
 import TodoList from '@/components/TodoList.vue';
 import axios from 'axios';
 import Toast from '@/components/Toast.vue';
 import {useToast} from '@/composables/toast';
+import { useRouter } from 'vue-router';
 
 export default {
     setup() {
+        const router = useRouter();
         const todos = ref([]);
         const error = ref('');
         const numberOfTodos = ref(0);
@@ -163,6 +171,13 @@ export default {
           },2000)
         });
         
+        //TodoCreate Page로 이동
+        const moveToCreatePage = () =>{
+          router.push({
+            name: 'TodoCreate'
+          })
+        }
+
         return {
             todos,
             addTodo,
@@ -177,9 +192,10 @@ export default {
             showToast,
             toastMessage,
             toastAlertType,
+            moveToCreatePage
         };
     },
-    components: { TodoSimpleForm, TodoList, Toast }
+    components: {TodoList, Toast }
 }
 </script>
 
