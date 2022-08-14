@@ -37,22 +37,10 @@
       "id": 15
     },
     {
-      "subject": "22",
-      "completed": false,
+      "subject": "1",
+      "completed": true,
       "body": "22",
       "id": 17
-    },
-    {
-      "subject": "",
-      "completed": false,
-      "body": "",
-      "id": 18
-    },
-    {
-      "subject": "",
-      "completed": false,
-      "body": "",
-      "id": 19
     }
   ]
 }

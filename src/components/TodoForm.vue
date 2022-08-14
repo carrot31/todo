@@ -10,7 +10,7 @@
             type="text" 
             class="form-control"
            />
-           <div v-if="subjectError" style="color:red">
+           <div v-if="subjectError" class="text-red">
             {{subjectError}}
            </div>
         </div>
@@ -58,7 +58,9 @@
       Cancel
     </button>
   </form>
-  <Toast v-if="showToast" :message="toastMessage" :type="toastAlertType"/>
+  <transition name="fade">
+    <Toast v-if="showToast" :message="toastMessage" :type="toastAlertType"/>
+  </transition>
   <div id="mandu">mandu</div>
 </template>
 
@@ -183,6 +185,29 @@ import {useToast} from '@/composables/toast';
 
 </script>
 
-<style>
+<!-- 이 컴포넌트 안에서만 style 적용 -->
+<style scoped>
+  .text-red{
+    color:red;
+  }
+  
+  /* 살며시 등장 */
+  .fade-enter-active,
+  .fade-leave-active{
+    transition: all 0.5s ease;
+  }
 
+  /* 사라지기 */
+  .fade-enter-from,
+  .fade-leave-to{
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+
+  /* 나타나기 */
+  .fade-enter-to,
+  .fade-leave-from{
+    opacity: 1;
+    transform: translateY(0px);
+  }
 </style>
